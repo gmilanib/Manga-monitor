@@ -36,11 +36,12 @@ public class MangaMonitorApplication {
 		int opt = scanner.nextInt();
 		switch (opt) {
 			case 1:
-				CadastroVolumeConsole cadastrarVolume = new CadastroVolumeConsole(filePath);
+				CadastrarVolume cadastrarVolume = new CadastrarVolume(filePath);
 				cadastrarVolume.cadastrarNovoVolume();
 				break;
 			case 2:
 				ConsultarVolume consultaVolume = new ConsultarVolume(filePath);
+				consultaVolume.consultarVolume(filePath);
 
 		}
 		/*

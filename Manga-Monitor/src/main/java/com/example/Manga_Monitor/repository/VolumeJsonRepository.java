@@ -15,6 +15,7 @@ import java.util.Optional;
 public class VolumeJsonRepository implements VolumeRepository {
 
     private final Path arquivo;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public VolumeJsonRepository(Path arquivo) {
         this.arquivo = arquivo;
@@ -25,23 +26,22 @@ public class VolumeJsonRepository implements VolumeRepository {
         try {
             Files.createDirectories(arquivo.getParent());
 
-            ObjectMapper objectMapper = new ObjectMapper();
-
             List<Map<String, Object>> volumesJson = new ArrayList<>();
 
             if (Files.exists(arquivo)) {
                 List<Map<String, Object>> volumesExistentes =
                         objectMapper.readValue(
                                 arquivo.toFile(),
-                                new TypeReference<List<Map<String, Object>>>() {}
+                                new TypeReference<List<Map<String, Object>>>() {
+                                }
                         );
 
                 volumesJson.addAll(volumesExistentes);
             }
 
             Map<String, Object> novoVolume = Map.of(
-                    "Titulo", volume.getTitulo(),
-                    "Volume", volume.getNumero(),
+                    "titulo", volume.getTitulo(),
+                    "numero", volume.getNumero(),
                     "URL", volume.getURL()
             );
 
@@ -70,5 +70,12 @@ public class VolumeJsonRepository implements VolumeRepository {
     public Optional<Volume> buscarPrimeiro() {
         throw new UnsupportedOperationException("Implemente a leitura do primeiro volume");
     }
+
+    @Override
+    public List<Volume> buscarTodos() {
+        return objectMapper.readValue(arquivo, new TypeReference<List<Volume>>() {
+        });
+    }
+
 
 }

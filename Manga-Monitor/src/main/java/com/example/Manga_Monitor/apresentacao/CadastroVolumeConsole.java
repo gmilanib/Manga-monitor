@@ -25,28 +25,4 @@ import java.util.Scanner;
  * repository, usar ObjectMapper nem acessar diretamente o arquivo JSON.
  */
 public class CadastroVolumeConsole {
-    private Path filePath;
-
-    public CadastroVolumeConsole(Path filePath) {
-        this.filePath = filePath;
-    }
-
-    public void cadastrarNovoVolume() {
-        VolumeJsonRepository volumeRepository = new VolumeJsonRepository(filePath);
-        Scanner sc = new Scanner(System.in);
-
-        System.out.println("########## Cadastrando Volume ##########");
-        System.out.println("Nome do Volume: ");
-        String nome = sc.nextLine();
-        System.out.println("Volume: ");
-        int num = sc.nextInt();
-        System.out.println("URL: ");
-        sc.nextLine();
-        String url = sc.nextLine();
-        Volume volume = new Volume(nome, num, url);
-
-        volumeRepository.salvar(volume);
-
-        sc.close();
-    }
 }

@@ -1,8 +1,10 @@
 package com.example.Manga_Monitor.aplicacao;
 
+import com.example.Manga_Monitor.dominio.Volume;
 import com.example.Manga_Monitor.repository.VolumeJsonRepository;
 
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Coordena a primeira consulta real de um único volume cadastrado.
@@ -31,6 +33,11 @@ public class ConsultarVolume {
      * 9. não usar Path, ObjectMapper, HttpClient, HTML ou Scanner aqui.
      */
     public void consultarVolume(Path path) {
+        VolumeJsonRepository volumeJsonRepository = new VolumeJsonRepository(filePath);
+        List<Volume> volumes = volumeJsonRepository.buscarTodos();
+        for (Volume volume : volumes) {
+            System.out.println(volume);
+        }
 
     }
 

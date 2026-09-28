@@ -2,6 +2,7 @@ package com.example.Manga_Monitor.repository;
 
 import com.example.Manga_Monitor.dominio.Volume;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VolumeRepository {
@@ -16,5 +17,7 @@ public interface VolumeRepository {
       * 3. não realizar requisição HTTP nesta camada.
       */
      Optional<Volume> buscarPrimeiro();
+
+     public List<Volume> buscarTodos();
 
 }
