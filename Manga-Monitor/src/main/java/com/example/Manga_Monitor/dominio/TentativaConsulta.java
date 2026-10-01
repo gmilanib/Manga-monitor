@@ -1,5 +1,7 @@
 package com.example.Manga_Monitor.dominio;
 
+import com.example.Manga_Monitor.infraestrutura.http.ConsultorPaginaHttp;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -42,5 +44,12 @@ public class TentativaConsulta {
 
     public String getMotivoErro() {
         return motivoErro;
+    }
+
+
+    public void tentativaConsulta() {
+        this.instante = LocalDateTime.now();
+        ConsultorPaginaHttp consultorPaginaHttp = new ConsultorPaginaHttp();
+
     }
 }

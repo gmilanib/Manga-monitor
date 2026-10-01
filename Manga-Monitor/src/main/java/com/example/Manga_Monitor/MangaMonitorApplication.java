@@ -2,7 +2,6 @@ package com.example.Manga_Monitor;
 
 import com.example.Manga_Monitor.aplicacao.CadastrarVolume;
 import com.example.Manga_Monitor.aplicacao.ConsultarVolume;
-import com.example.Manga_Monitor.infraestrutura.http.ConsultorPaginaHttp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -30,6 +29,8 @@ public class MangaMonitorApplication {
 
 
         Scanner scanner = new Scanner(System.in);
+        System.out.println("########## Escolha uma das opções abaixo ##########");
+        System.out.print("1. Cadastrar novo volume; \n2.Consultar novo volume:\n3.Exibir volume de um novo volume");
         int opt = scanner.nextInt();
         switch (opt) {
             case 1:
@@ -40,11 +41,7 @@ public class MangaMonitorApplication {
                 ConsultarVolume consultaVolume = new ConsultarVolume(filePath);
                 consultaVolume.consultarVolume(filePath);
                 break;
-            case 3:
-                ConsultorPaginaHttp consultorPaginaHttp = new ConsultorPaginaHttp();
-                consultorPaginaHttp.consulta();
 
-                break;
         }
         /*
          * TODO para montar o fluxo de consulta quando as classes estiverem prontas:

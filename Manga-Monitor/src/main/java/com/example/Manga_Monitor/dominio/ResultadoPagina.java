@@ -8,8 +8,17 @@ public class ResultadoPagina {
     private String motivoErro;
 
     public ResultadoPagina(boolean paginaDisponnivel, BigDecimal preco, String motivoErro) {
-        if (paginaDisponnivel == "") {
-
+        this.paginaDisponnivel = paginaDisponnivel;
+        this.preco = preco;
+        if (paginaDisponnivel == true) {
+            this.motivoErro = "";
+        } else {
+            this.motivoErro = "*Montar motivo do erro no cliente HTTP";
         }
     }
+
+    public boolean isPaginaDisponnivel() {
+        return paginaDisponnivel;
+    }
+
 }

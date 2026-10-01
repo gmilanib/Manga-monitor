@@ -1,6 +1,7 @@
 package com.example.Manga_Monitor.aplicacao;
 
 import com.example.Manga_Monitor.dominio.Volume;
+import com.example.Manga_Monitor.infraestrutura.http.ConsultorPaginaHttp;
 import com.example.Manga_Monitor.repository.VolumeJsonRepository;
 
 import java.nio.file.Path;
@@ -12,6 +13,7 @@ import java.util.List;
 public class ConsultarVolume {
     private Path filePath;
     private VolumeJsonRepository volumeJsonRepository;
+    private ConsultorPaginaHttp consultorPaginaHttp;
 
     public ConsultarVolume(Path filePath) {
         this.filePath = filePath;
@@ -20,7 +22,6 @@ public class ConsultarVolume {
     }
     /**
      * TODO ao implementar:
-     * 1. declarar VolumeRepository e ConsultorPaginaVolume como dependências;
      * 2. recebê-las pelo construtor;
      * 3. criar um método executar() que devolva TentativaConsulta;
      * 4. pedir ao repositório o primeiro volume;
@@ -36,7 +37,8 @@ public class ConsultarVolume {
         VolumeJsonRepository volumeJsonRepository = new VolumeJsonRepository(filePath);
         List<Volume> volumes = volumeJsonRepository.buscarTodos();
         for (Volume volume : volumes) {
-            System.out.println(volume);
+            ConsultorPaginaHttp consultorPaginaHttp = new ConsultorPaginaHttp();
+            consultorPaginaHttp.consultar(volume);
         }
 
     }
