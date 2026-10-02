@@ -21,4 +21,11 @@ public class ResultadoPagina {
         return paginaDisponnivel;
     }
 
+    public BigDecimal getPreco() {
+        return preco;
+    }
+
+    public String getMotivoErro() {
+        return motivoErro;
+    }
 }

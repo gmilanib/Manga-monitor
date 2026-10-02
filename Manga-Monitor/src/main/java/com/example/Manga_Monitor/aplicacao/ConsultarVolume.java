@@ -1,5 +1,7 @@
 package com.example.Manga_Monitor.aplicacao;
 
+import com.example.Manga_Monitor.dominio.ResultadoPagina;
+import com.example.Manga_Monitor.dominio.TentativaConsulta;
 import com.example.Manga_Monitor.dominio.Volume;
 import com.example.Manga_Monitor.infraestrutura.http.ConsultorPaginaHttp;
 import com.example.Manga_Monitor.repository.VolumeJsonRepository;
@@ -22,7 +24,6 @@ public class ConsultarVolume {
     }
     /**
      * TODO ao implementar:
-     * 2. recebê-las pelo construtor;
      * 3. criar um método executar() que devolva TentativaConsulta;
      * 4. pedir ao repositório o primeiro volume;
      * 5. informar claramente quando nenhum volume estiver cadastrado;
@@ -33,14 +34,16 @@ public class ConsultarVolume {
      *    disponibilidade DESCONHECIDA, preço ausente e motivo específico;
      * 9. não usar Path, ObjectMapper, HttpClient, HTML ou Scanner aqui.
      */
-    public void consultarVolume(Path path) {
+    public TentativaConsulta consultarVolume(Path path) {
         VolumeJsonRepository volumeJsonRepository = new VolumeJsonRepository(filePath);
         List<Volume> volumes = volumeJsonRepository.buscarTodos();
         for (Volume volume : volumes) {
             ConsultorPaginaHttp consultorPaginaHttp = new ConsultorPaginaHttp();
-            consultorPaginaHttp.consultar(volume);
-        }
+            ResultadoPagina resultadoPagina = consultorPaginaHttp.consultar(volume);
 
+            TentativaConsulta tentativaConsulta = new TentativaConsulta(volume, resultadoPagina.getPreco(), resultadoPagina.getMotivoErro());
+        }
+    return null;
     }
 
 }

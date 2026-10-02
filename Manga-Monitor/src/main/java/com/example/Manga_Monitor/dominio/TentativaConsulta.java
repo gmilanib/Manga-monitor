@@ -4,6 +4,7 @@ import com.example.Manga_Monitor.infraestrutura.http.ConsultorPaginaHttp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class TentativaConsulta {
     private Volume volume;
@@ -13,14 +14,23 @@ public class TentativaConsulta {
     private BigDecimal preco;
     private String motivoErro;
 
-    public TentativaConsulta(Volume volume, LocalDateTime instante, boolean sucesso, Disponibilidade disponibilidade, BigDecimal preco, String motivoErro) {
+    public TentativaConsulta(Volume volume, BigDecimal preco, String motivoErro) {
         this.volume = volume;
-        this.instante = instante;
-        this.sucesso = sucesso;
-        this.disponibilidade = disponibilidade;
-        this.preco = preco;
-        this.motivoErro = motivoErro;
+        this.instante = LocalDateTime.now();
+        this.sucesso = Objects.equals(motivoErro, "");
+        if (this.sucesso) {
+            this.preco = preco;
+            if (this.preco.compareTo(BigDecimal.ZERO) > 0) {
+                this.disponibilidade = Disponibilidade.DISPONIVEL;
+            } else {
+                this.disponibilidade = Disponibilidade.INDISPONIVEL;
+            }
+        } else {
+            this.disponibilidade = Disponibilidade.DESCONHECIDA;
+            this.motivoErro = motivoErro;
+        }
     }
+
 
     public Volume getVolume() {
         return volume;
@@ -50,6 +60,5 @@ public class TentativaConsulta {
     public void tentativaConsulta() {
         this.instante = LocalDateTime.now();
         ConsultorPaginaHttp consultorPaginaHttp = new ConsultorPaginaHttp();
-
     }
 }

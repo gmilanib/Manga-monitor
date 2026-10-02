@@ -87,3 +87,25 @@ do preço.
 Os testes futuros devem cobrir preço principal presente, ausência de preço,
 múltiplos preços, parcelas e a distinção entre oferta principal e chamadas de
 outras ofertas, mesmo quando estas ficam próximas ao bloco principal.
+
+## Avaliação de extração por partes — 02/10/2026
+
+O usuário propôs utilizar `.a-price-whole` para a parte inteira e
+`.a-price-fraction` para os centavos. A abordagem é viável se esses elementos
+estiverem presentes no HTML recebido pelo `HttpClient` e representarem a
+oferta principal definida acima. A inspeção do navegador, isoladamente, não
+confirma que a resposta HTTP do aplicativo contenha os mesmos elementos.
+
+A futura extração deve primeiro identificar o preço da oferta principal e,
+dentro do mesmo elemento de preço, ler as duas partes. Não selecionar a primeira
+ocorrência de cada classe na página inteira, pois isso pode misturar ofertas ou
+capturar parcelas. Normalizar espaços, separadores de milhares e eventual vírgula
+na parte inteira; por exemplo, `29,` e `90` devem resultar em
+`BigDecimal("29.90")`. Partes ausentes ou inválidas não devem virar zero nem
+um preço presumido. Os testes devem incluir esses casos e valores com milhares.
+
+Nesta avaliação foram lidos a documentação e `ConsultorPaginaHttp`, que ainda
+retorna o preço fixo `10.00`. Os HTMLs temporários citados acima já não estão
+disponíveis. Portanto, não houve confirmação desses seletores em uma captura
+atual, implementação ou execução de testes. Antes da implementação, validar
+um trecho real do HTML recebido pelo aplicativo e seu contexto de oferta.

@@ -9,6 +9,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConsultorPaginaHttp implements ConsultorPaginaVolume {
     private ResultadoPagina resultadoPagina;
@@ -26,9 +28,10 @@ public class ConsultorPaginaHttp implements ConsultorPaginaVolume {
     @Override
     public ResultadoPagina consultar(Volume volume) {
         boolean disponibilidade = false;
-        String html;
+        String html = "";
         String motivoDoErro;
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(volume.getURL())).GET().build();
+
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             disponibilidade = response.statusCode() == 200;
@@ -37,21 +40,34 @@ public class ConsultorPaginaHttp implements ConsultorPaginaVolume {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         if (disponibilidade) {
             motivoDoErro = "";
-            BigDecimal valor = new BigDecimal("10.00");
+            Pattern patternWhole = Pattern.compile("class=\"a-price-whole\"[^>]*>\\s*([\\d.]+)");
+            Pattern patternFraction = Pattern.compile("class=\"a-price-fraction\"[^>]*>\\s*(\\d+)");
 
+            Matcher matcherWhole = patternWhole.matcher(html);
+            Matcher matcherFraction = patternFraction.matcher(html);
 
-        } else {
-            motivoDoErro = "*Deu erro em algum lugar";
-            BigDecimal valor = new BigDecimal("10.00");
+            if (matcherWhole.find() && matcherFraction.find()) {
+
+                String whole = matcherWhole.group(1);
+                String fraction = matcherFraction.group(1);
+
+                String preco = whole.replace(".", "") + "." + fraction;
+
+                BigDecimal valor = new BigDecimal(preco);
+
+                resultadoPagina = new ResultadoPagina(disponibilidade, valor, motivoDoErro);
+
+            } else {
+                motivoDoErro = "*Deu erro em algum lugar";
+                BigDecimal valor = new BigDecimal("0");
+                resultadoPagina = new ResultadoPagina(disponibilidade, valor, motivoDoErro);
+            }
 
         }
-
-        BigDecimal preco = new BigDecimal("10.00");
-        resultadoPagina = new ResultadoPagina(disponibilidade, preco, null);
         return resultadoPagina;
     }
-
-
 }
+
