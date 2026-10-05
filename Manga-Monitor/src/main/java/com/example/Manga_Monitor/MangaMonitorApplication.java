@@ -31,7 +31,7 @@ public class MangaMonitorApplication {
         Scanner scanner = new Scanner(System.in);
         System.out.println("########## Escolha uma das opções abaixo ##########");
         System.out.print("1. Cadastrar novo volume; \n2.Consultar novo volume:\n3.Exibir volume de um novo volume");
-        int opt = scanner.nextInt();
+        int opt = 2;
         switch (opt) {
             case 1:
                 CadastrarVolume cadastrarVolume = new CadastrarVolume(filePath);

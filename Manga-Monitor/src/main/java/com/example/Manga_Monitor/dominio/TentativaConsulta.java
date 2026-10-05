@@ -1,18 +1,26 @@
 package com.example.Manga_Monitor.dominio;
 
 import com.example.Manga_Monitor.infraestrutura.http.ConsultorPaginaHttp;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
+@Entity
 public class TentativaConsulta {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    @ManyToOne
     private Volume volume;
     private LocalDateTime instante;
     private boolean sucesso;
     private Disponibilidade disponibilidade;
     private BigDecimal preco;
     private String motivoErro;
+
+    public TentativaConsulta() {
+    }
 
     public TentativaConsulta(Volume volume, BigDecimal preco, String motivoErro) {
         this.volume = volume;

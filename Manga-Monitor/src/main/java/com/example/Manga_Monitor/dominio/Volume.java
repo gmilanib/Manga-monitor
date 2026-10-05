@@ -1,9 +1,21 @@
 package com.example.Manga_Monitor.dominio;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Volume {
-    private final String titulo;
-    private final int numero;
-    private final String URL;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String titulo;
+    private int numero;
+    private String URL;
+
+    public Volume() {
+    }
 
     public Volume(String titulo, int numero, String URL) {
         if (titulo == null) {
