@@ -1,11 +1,5 @@
 package com.example.Manga_Monitor.apresentacao;
 
-import com.example.Manga_Monitor.dominio.Volume;
-import com.example.Manga_Monitor.repository.VolumeJsonRepository;
-
-import java.nio.file.Path;
-import java.util.Scanner;
-
 /**
  * Realiza a entrada e a saída do cadastro pelo terminal.
  * <p>

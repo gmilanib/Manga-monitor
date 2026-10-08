@@ -36,7 +36,6 @@ public class ConsultorPaginaHttp implements ConsultorPaginaVolume {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             disponibilidade = response.statusCode() == 200;
             html = response.body();
-            System.out.println(html);
         } catch (Exception e) {
             e.printStackTrace();
         }

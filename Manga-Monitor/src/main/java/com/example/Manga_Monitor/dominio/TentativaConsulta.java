@@ -11,7 +11,8 @@ public class TentativaConsulta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "volume_id", nullable = false)
     private Volume volume;
     private LocalDateTime instante;
     private boolean sucesso;

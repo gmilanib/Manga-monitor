@@ -54,6 +54,7 @@ public class Volume {
     }
 
     public String getURL() {
+       URL = URL.replaceAll("\"", "\\\"");
         return URL;
     }
 

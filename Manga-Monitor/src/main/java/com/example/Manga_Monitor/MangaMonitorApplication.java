@@ -2,10 +2,10 @@ package com.example.Manga_Monitor;
 
 import com.example.Manga_Monitor.aplicacao.CadastrarVolume;
 import com.example.Manga_Monitor.aplicacao.ConsultarVolume;
+import com.example.Manga_Monitor.repository.TentativaConsultaRepository;
+import com.example.Manga_Monitor.repository.VolumeRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.nio.file.Path;
 import java.util.Scanner;
 
 @SpringBootApplication
@@ -23,9 +23,8 @@ public class MangaMonitorApplication {
      */
 
     public static void main(String[] args) {
-        SpringApplication.run(MangaMonitorApplication.class, args);
-
-        Path filePath = Path.of(System.getProperty("user.dir"), "Dados", "volumes.json");
+        var contexto = SpringApplication.run(MangaMonitorApplication.class, args);
+        VolumeRepository volumeRepository = contexto.getBean(VolumeRepository.class);
 
 
         Scanner scanner = new Scanner(System.in);
@@ -34,12 +33,13 @@ public class MangaMonitorApplication {
         int opt = 2;
         switch (opt) {
             case 1:
-                CadastrarVolume cadastrarVolume = new CadastrarVolume(filePath);
+                CadastrarVolume cadastrarVolume = new CadastrarVolume(volumeRepository);
                 cadastrarVolume.cadastrarNovoVolume();
                 break;
             case 2:
-                ConsultarVolume consultaVolume = new ConsultarVolume(filePath);
-                consultaVolume.consultarVolume(filePath);
+                TentativaConsultaRepository tentativaRepository = contexto.getBean(TentativaConsultaRepository.class);
+                ConsultarVolume consultaVolume = new ConsultarVolume(volumeRepository ,tentativaRepository );
+                consultaVolume.consultarVolume();
                 break;
 
         }
