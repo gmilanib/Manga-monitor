@@ -1,31 +1,24 @@
 package com.example.Manga_Monitor.dominio;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
-public class ResultadoPagina {
-    private boolean paginaDisponnivel;
-    private BigDecimal preco;
-    private String motivoErro;
+/** Oferta principal consultada; preço ausente não significa falta de estoque. */
+public final class ResultadoPagina {
+    private final Disponibilidade disponibilidade;
+    private final BigDecimal preco;
 
-    public ResultadoPagina(boolean paginaDisponnivel, BigDecimal preco, String motivoErro) {
-        this.paginaDisponnivel = paginaDisponnivel;
-        this.preco = preco;
-        if (paginaDisponnivel == true) {
-            this.motivoErro = "";
-        } else {
-            this.motivoErro = "*Montar motivo do erro no cliente HTTP";
+    public ResultadoPagina(Disponibilidade disponibilidade, BigDecimal preco) {
+        this.disponibilidade = Objects.requireNonNull(disponibilidade);
+        if (preco != null && preco.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Preço deve ser positivo ou ausente.");
         }
+        if (disponibilidade == Disponibilidade.INDISPONIVEL && preco != null) {
+            throw new IllegalArgumentException("Produto sem estoque não deve ter preço registrado.");
+        }
+        this.preco = preco;
     }
 
-    public boolean isPaginaDisponnivel() {
-        return paginaDisponnivel;
-    }
-
-    public BigDecimal getPreco() {
-        return preco;
-    }
-
-    public String getMotivoErro() {
-        return motivoErro;
-    }
+    public Disponibilidade getDisponibilidade() { return disponibilidade; }
+    public BigDecimal getPreco() { return preco; }
 }
