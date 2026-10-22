@@ -1,9 +1,6 @@
 package com.example.Manga_Monitor.infraestrutura.navegador;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
 
 public class NavegadorPlaywright {
     private Playwright playwright;
@@ -12,13 +9,13 @@ public class NavegadorPlaywright {
     private Page page;
 
     public NavegadorPlaywright() {
-        try (Playwright playwright = Playwright.create()
-        ) {
+        Playwright playwright = Playwright.create();
+
             this.playwright = playwright;
-            this.browser = playwright.chromium().launch();
+            this.browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(750));
             this.browserContext = browser.newContext(new Browser.NewContextOptions().setLocale("pt-BR").setViewportSize(1280,900));
             this.page = browserContext.newPage();
-        }
+
 
 
     }
