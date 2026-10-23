@@ -2,7 +2,7 @@ package com.example.Manga_Monitor.infraestrutura.navegador;
 
 import com.microsoft.playwright.*;
 
-public class NavegadorPlaywright {
+public class NavegadorPlaywright implements AutoCloseable {
     private Playwright playwright;
     private Browser browser;
     private BrowserContext browserContext;
@@ -12,7 +12,7 @@ public class NavegadorPlaywright {
         Playwright playwright = Playwright.create();
 
             this.playwright = playwright;
-            this.browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(750));
+            this.browser = playwright.chromium().launch();
             this.browserContext = browser.newContext(new Browser.NewContextOptions().setLocale("pt-BR").setViewportSize(1280,900));
             this.page = browserContext.newPage();
 
@@ -34,5 +34,24 @@ public class NavegadorPlaywright {
 
     public Page getPage() {
         return page;
+    }
+
+    @Override
+    public void close() {
+        try {
+            if (browserContext != null) {
+                browserContext.close();
+            }
+        } finally {
+            try {
+                if (browser != null) {
+                    browser.close();
+                }
+            } finally {
+                if (playwright != null) {
+                    playwright.close();
+                }
+            }
+        }
     }
 }

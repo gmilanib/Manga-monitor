@@ -1,8 +1,10 @@
 package com.example.Manga_Monitor;
 
 import com.example.Manga_Monitor.aplicacao.CadastrarVolume;
+import com.example.Manga_Monitor.aplicacao.ConsultarVolume;
 import com.example.Manga_Monitor.dominio.TentativaConsulta;
 import com.example.Manga_Monitor.dominio.Volume;
+import com.example.Manga_Monitor.repository.TentativaConsultaRepository;
 import com.example.Manga_Monitor.repository.VolumeRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,11 +29,12 @@ public class MangaMonitorApplication {
     public static void main(String[] args) {
         var contexto = SpringApplication.run(MangaMonitorApplication.class, args);
         VolumeRepository volumeRepository = contexto.getBean(VolumeRepository.class);
+        TentativaConsultaRepository tentativaConsultaRepository = contexto.getBean(TentativaConsultaRepository.class);
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("########## Escolha uma das opções abaixo ##########");
         System.out.print("1. Cadastrar novo volume; \n2.Consultar novo volume:\n3.Exibir volume de um novo volume");
-        int opt = 2;
+        int opt = scanner.nextInt();
         switch (opt) {
             case 1:
                 CadastrarVolume cadastrarVolume = new CadastrarVolume(volumeRepository);
@@ -41,8 +44,7 @@ public class MangaMonitorApplication {
                 List<Volume> volumes = volumeRepository.findAll();
                 for (Volume volume : volumes){
                     System.out.println(volume.getTitulo());
-                    TentativaConsulta tentativaConsulta = new TentativaConsulta(volume);
-                    tentativaConsulta.tentativaConsulta(volume);
+                    ConsultarVolume consultarVolume = new ConsultarVolume(volume, tentativaConsultaRepository);
                 }
                 break;
             default:

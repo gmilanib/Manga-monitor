@@ -14,7 +14,7 @@ public class Volume {
     private int numero;
     private String URL;
 
-    public Volume() {
+    protected Volume() {
     }
 
     public Volume(String titulo, int numero, String URL) {
