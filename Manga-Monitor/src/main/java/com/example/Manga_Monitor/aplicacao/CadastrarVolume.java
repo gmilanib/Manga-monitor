@@ -7,13 +7,18 @@ import java.util.Scanner;
 
 public class CadastrarVolume {
     private final VolumeRepository volumeRepository;
+    private final Scanner sc;
 
     public CadastrarVolume(VolumeRepository volumeRepository) {
+        this(volumeRepository, new Scanner(System.in));
+    }
+
+    public CadastrarVolume(VolumeRepository volumeRepository, Scanner sc) {
         this.volumeRepository = volumeRepository;
+        this.sc = sc;
     }
 
     public void cadastrarNovoVolume() {
-        Scanner sc = new Scanner(System.in);
         System.out.println("########## Cadastrando Volume ##########");
         System.out.println("*****Nome do Volume***** ");
         String nome = sc.nextLine();

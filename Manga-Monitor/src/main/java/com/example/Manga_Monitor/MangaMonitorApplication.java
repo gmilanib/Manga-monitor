@@ -1,8 +1,7 @@
 package com.example.Manga_Monitor;
 
-import com.example.Manga_Monitor.aplicacao.CadastrarVolume;
-import com.example.Manga_Monitor.aplicacao.ConsultarVolume;
-import com.example.Manga_Monitor.dominio.TentativaConsulta;
+import com.example.Manga_Monitor.aplicacao.*;
+import com.example.Manga_Monitor.apresentacao.ExclusaoVolumeConsole;
 import com.example.Manga_Monitor.dominio.Volume;
 import com.example.Manga_Monitor.repository.TentativaConsultaRepository;
 import com.example.Manga_Monitor.repository.VolumeRepository;
@@ -11,20 +10,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.Timer;
 
 @SpringBootApplication
 public class MangaMonitorApplication {
-    /**
-     * 1. iniciar o contexto do Spring;
-     * 2. definir o caminho Dados/volumes.json;
-     * 3. criar a implementação VolumeJsonRepository;
-     * 4. entregar o repository ao caso de uso CadastrarVolume;
-     * 5. entregar o caso de uso à apresentação CadastroVolumeConsole;
-     * 6. mandar a apresentação iniciar a interação com o usuário.
-     * <p>
-     * Esta classe apenas monta e inicia o fluxo. Ela não deve ler dados do
-     * terminal, validar um volume ou manipular diretamente o arquivo JSON.
-     */
 
     public static void main(String[] args) {
         var contexto = SpringApplication.run(MangaMonitorApplication.class, args);
@@ -33,22 +22,46 @@ public class MangaMonitorApplication {
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("########## Escolha uma das opções abaixo ##########");
-        System.out.print("1. Cadastrar novo volume; \n2.Consultar novo volume:\n3.Exibir volume de um novo volume");
-        int opt = scanner.nextInt();
+        System.out.print("1. Cadastrar novo volume; \n2.Consultar novo volume;\n3.Exibir volume de um novo volume;\n");
+        System.out.println("4. Excluir volume por título e número;");
+        if (!scanner.hasNextLine()) return;
+        int opt;
+        try {
+            opt = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Opção inválida.");
+            return;
+        }
+        opt = 5;
         switch (opt) {
             case 1:
-                CadastrarVolume cadastrarVolume = new CadastrarVolume(volumeRepository);
+                CadastrarVolume cadastrarVolume = new CadastrarVolume(volumeRepository, scanner);
                 cadastrarVolume.cadastrarNovoVolume();
                 break;
             case 2:
                 List<Volume> volumes = volumeRepository.findAll();
-                for (Volume volume : volumes){
+                for (Volume volume : volumes) {
                     System.out.println(volume.getTitulo());
                     ConsultarVolume consultarVolume = new ConsultarVolume(volume, tentativaConsultaRepository);
                 }
                 break;
+            //Consulta continua a cada X horas;
+            case 3:
+                Timer timer = new Timer();
+                ConsultaAgendada consultaAgendada = new ConsultaAgendada(volumeRepository, tentativaConsultaRepository);
+                timer.schedule(consultaAgendada, 0, 120);
+                break;
+            case 4:
+                new ExclusaoVolumeConsole(contexto.getBean(ExcluirVolume.class), scanner, System.out).executar();
+                break;
+            case 5:
+                Historico historico = new Historico(tentativaConsultaRepository, volumeRepository);
+                historico.obterVolumes();
+                historico.obterTentativas();
+                historico.menorPreco();
+                break;
             default:
-                throw new IllegalStateException("Unexpected value: " + opt);
+                System.out.println("Opção inválida.");
         }
     }
 }

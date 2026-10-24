@@ -4,4 +4,5 @@ import com.example.Manga_Monitor.dominio.TentativaConsulta;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TentativaConsultaRepository extends JpaRepository<TentativaConsulta, Long> {
+    void deleteByVolumeId(long volumeId);
 }

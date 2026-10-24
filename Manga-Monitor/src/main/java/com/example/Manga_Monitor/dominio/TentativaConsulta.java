@@ -9,6 +9,8 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
+
 @Entity
 public class TentativaConsulta {
     @Id
@@ -17,6 +19,10 @@ public class TentativaConsulta {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "volume_id", nullable = false)
     private Volume volume;
+    @Column(updatable = false)
+    private String titulo;
+    @Column(updatable = false)
+    private Integer numero;
     @Convert(converter = DataHoraLegivelConverter.class)
     private LocalDateTime data;
     @Enumerated(EnumType.STRING)
@@ -27,50 +33,69 @@ public class TentativaConsulta {
     }
 
     public TentativaConsulta(Volume volume) {
-        this.volume = volume;
+        this.volume = Objects.requireNonNull(volume, "Volume não pode ser nulo.");
+        this.titulo = volume.getTitulo();
+        this.numero = volume.getNumero();
         this.data = LocalDateTime.now();
-
-        NavegadorPlaywright navegadorPlaywright = new NavegadorPlaywright();
-        Page page = navegadorPlaywright.getPage();
-        page.navigate(volume.getURL());
-        page.waitForTimeout(2_000);
-        Locator continuarComprando = page.getByRole(
-                AriaRole.BUTTON,
-                new Page.GetByRoleOptions()
-                        .setName("Continuar comprando")
-                        .setExact(true)
-        );
-
-        if (continuarComprando.isVisible()) {
-            continuarComprando.click();
+        try (
+                NavegadorPlaywright navegadorPlaywright = new NavegadorPlaywright()) {
+            Page page = navegadorPlaywright.getPage();
+            page.navigate(volume.getURL());
             page.waitForTimeout(2_000);
-            if (!page.url().equals(volume.getURL())) {
-                page.navigate(volume.getURL());
+            Locator continuarComprando = page.getByRole(
+                    AriaRole.BUTTON,
+                    new Page.GetByRoleOptions()
+                            .setName("Continuar comprando")
+                            .setExact(true)
+            );
+
+            if (continuarComprando.isVisible()) {
+                continuarComprando.click();
+                page.waitForTimeout(2_000);
+                if (!page.url().equals(volume.getURL())) {
+                    page.navigate(volume.getURL());
+                }
+
             }
+            Locator preco = page.locator("#corePriceDisplay_desktop_feature_div .priceToPay");
+            if (preco.isVisible()) {
+                this.disponibilidade = Disponibilidade.DISPONIVEL;
+                String parteInteira = preco
+                        .locator(".a-price-whole")
+                        .innerText()
+                        .replace(".", "")
+                        .replace(",", "")
+                        .trim();
 
-        }
-        Locator preco = page.locator("#corePriceDisplay_desktop_feature_div .priceToPay");
-        if (preco.isVisible()) {
-            this.disponibilidade = Disponibilidade.DISPONIVEL;
-            String parteInteira = preco
-                    .locator(".a-price-whole")
-                    .innerText()
-                    .replace(".", "")
-                    .replace(",", "")
-                    .trim();
-            String parteDecimal = preco
-                    .locator(".a-price-decimal")
-                    .innerText()
-                    .replace(".", "")
-                    .replace(",", "")
-                    .trim();
-
-            this.valor = new BigDecimal(parteInteira + "." + parteDecimal);
-        } else {
-            this.valor = BigDecimal.ZERO;
-            this.disponibilidade = Disponibilidade.INDISPONIVEL;
+                this.valor = new BigDecimal(parteInteira);
+            } else {
+                this.valor = BigDecimal.ZERO;
+                this.disponibilidade = Disponibilidade.INDISPONIVEL;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
+    public String getTitulo() {
+        return titulo;
+    }
 
+    public Integer getNumero() {
+        return numero;
+    }
 
+    public LocalDateTime getData() {
+        return data;
+    }
+
+    public Disponibilidade getDisponibilidade() {
+        return disponibilidade;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+    public Volume getVolume() {
+        return volume;
+    }
 }

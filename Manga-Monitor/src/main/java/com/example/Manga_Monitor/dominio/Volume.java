@@ -45,6 +45,10 @@ public class Volume {
         }
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getTitulo() {
         return titulo;
     }

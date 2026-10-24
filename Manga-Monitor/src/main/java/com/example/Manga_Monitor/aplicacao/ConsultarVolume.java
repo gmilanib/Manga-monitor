@@ -11,7 +11,6 @@ public class ConsultarVolume {
     public ConsultarVolume(Volume volume, TentativaConsultaRepository tentativaConsultaRepository) {
         this.tentativaConsulta = new  TentativaConsulta(volume);
         this.tentativaConsultaRepository = tentativaConsultaRepository;
-
         tentativaConsultaRepository.save(tentativaConsulta);
 
     }

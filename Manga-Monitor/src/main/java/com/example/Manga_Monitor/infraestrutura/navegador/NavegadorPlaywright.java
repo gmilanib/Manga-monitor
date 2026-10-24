@@ -16,8 +16,6 @@ public class NavegadorPlaywright implements AutoCloseable {
             this.browserContext = browser.newContext(new Browser.NewContextOptions().setLocale("pt-BR").setViewportSize(1280,900));
             this.page = browserContext.newPage();
 
-
-
     }
 
     public Playwright getPlaywright() {
