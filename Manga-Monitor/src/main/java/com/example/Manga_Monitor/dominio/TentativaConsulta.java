@@ -1,6 +1,7 @@
 package com.example.Manga_Monitor.dominio;
 
 import com.example.Manga_Monitor.infraestrutura.navegador.NavegadorPlaywright;
+import com.example.Manga_Monitor.infraestrutura.navegador.ExtratorPrecoAmazon;
 import com.example.Manga_Monitor.infraestrutura.persistencia.DataHoraLegivelConverter;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -57,17 +58,10 @@ public class TentativaConsulta {
                 }
 
             }
-            Locator preco = page.locator("#corePriceDisplay_desktop_feature_div .priceToPay");
-            if (preco.isVisible()) {
+            BigDecimal preco = ExtratorPrecoAmazon.extrair(page);
+            if (preco != null) {
                 this.disponibilidade = Disponibilidade.DISPONIVEL;
-                String parteInteira = preco
-                        .locator(".a-price-whole")
-                        .innerText()
-                        .replace(".", "")
-                        .replace(",", "")
-                        .trim();
-
-                this.valor = new BigDecimal(parteInteira);
+                this.valor = preco;
             } else {
                 this.valor = BigDecimal.ZERO;
                 this.disponibilidade = Disponibilidade.INDISPONIVEL;
@@ -97,5 +91,15 @@ public class TentativaConsulta {
     }
     public Volume getVolume() {
         return volume;
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + id
+                + "\nTítulo: " + titulo
+                + "\nNúmero: " + numero
+                + "\nData: " + data
+                + "\nDisponibilidade: " + disponibilidade
+                + "\nValor: " + valor;
     }
 }

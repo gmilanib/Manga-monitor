@@ -13,6 +13,11 @@ public class ConsultarVolume {
         this.tentativaConsultaRepository = tentativaConsultaRepository;
         tentativaConsultaRepository.save(tentativaConsulta);
 
+        System.out.println("--------------------");
+        System.out.println("Volume consultado com sucesso");
+        System.out.println(tentativaConsulta.toString());
+        System.out.println("--------------------");
+
     }
 
 

@@ -20,12 +20,13 @@ public class MangaMonitorApplication {
         var contexto = SpringApplication.run(MangaMonitorApplication.class, args);
         VolumeRepository volumeRepository = contexto.getBean(VolumeRepository.class);
         TentativaConsultaRepository tentativaConsultaRepository = contexto.getBean(TentativaConsultaRepository.class);
+        Historico historico = new Historico(tentativaConsultaRepository, volumeRepository);
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("########## Escolha uma das opções abaixo ##########");
         System.out.print("1. Cadastrar novo volume; \n2.Consultar novo volume;\n3.Consulta agendada:\n");
         System.out.println("4. Excluir volume por título e número;");
-        System.out.println("5. Consultar histórico de precos:");
+        System.out.println("5. Consultar histórico de preços:");
         System.out.println("6. Consultar 1 volume:");
         System.out.println("##############################");
         if (!scanner.hasNextLine()) return;
@@ -47,6 +48,9 @@ public class MangaMonitorApplication {
                     System.out.println(volume.getTitulo());
                     ConsultarVolume consultarVolume = new ConsultarVolume(volume, tentativaConsultaRepository);
                 }
+                historico.obterVolumes();
+                historico.obterTentativas();
+                historico.menorPreco();
                 break;
             //Consulta continua a cada X horas;
             case 3:
@@ -58,7 +62,6 @@ public class MangaMonitorApplication {
                 new ExclusaoVolumeConsole(contexto.getBean(ExcluirVolume.class), scanner, System.out).executar();
                 break;
             case 5:
-                Historico historico = new Historico(tentativaConsultaRepository, volumeRepository);
                 historico.obterVolumes();
                 historico.obterTentativas();
                 historico.menorPreco();

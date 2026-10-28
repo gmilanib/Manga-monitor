@@ -41,6 +41,39 @@ class IdentificacaoTentativaTest {
     }
 
     @Test
+    void devePersistirERelerPrecoDaOfertaSelecionadaComCentavos() {
+        // Esperado: valor 43.44 tanto no objeto criado quanto no registro relido pelo JPA.
+        Volume volume = volumes.saveAndFlush(new Volume("Chainsaw man", 23, "https://loja/23"));
+        Page pagina = mock(Page.class);
+        Locator continuar = mock(Locator.class);
+        Locator acordeao = mock(Locator.class);
+        Locator preco = mock(Locator.class);
+        Locator reais = mock(Locator.class);
+        Locator centavos = mock(Locator.class);
+        when(pagina.getByRole(any(), any())).thenReturn(continuar);
+        when(pagina.locator("#buyBoxAccordion")).thenReturn(acordeao);
+        when(acordeao.count()).thenReturn(1);
+        when(pagina.locator("#buyBoxAccordion .a-accordion-active #corePriceDisplay_desktop_feature_div .priceToPay"))
+                .thenReturn(preco);
+        when(preco.count()).thenReturn(1);
+        when(preco.isVisible()).thenReturn(true);
+        when(preco.locator(".a-price-whole")).thenReturn(reais);
+        when(preco.locator(".a-price-fraction")).thenReturn(centavos);
+        when(reais.count()).thenReturn(1);
+        when(centavos.count()).thenReturn(1);
+        when(reais.innerText()).thenReturn("43,");
+        when(centavos.innerText()).thenReturn("44");
+        try (var navegador = mockConstruction(NavegadorPlaywright.class,
+                (mock, context) -> when(mock.getPage()).thenReturn(pagina))) {
+            TentativaConsulta tentativa = new TentativaConsulta(volume);
+            assertThat(tentativa.getValor()).isEqualByComparingTo("43.44");
+            assertThat(tentativa.getDisponibilidade()).isEqualTo(Disponibilidade.DISPONIVEL);
+            tentativas.saveAndFlush(tentativa);
+        }
+        assertThat(tentativas.findAll().getFirst().getValor()).isEqualByComparingTo("43.44");
+    }
+
+    @Test
     void deveGravarTituloENumeroNaPropriaTabelaERelerPeloJpa() {
         Volume volume = volumes.saveAndFlush(new Volume("Naruto — Edição Especial", 3, "https://loja/3"));
         tentativas.saveAndFlush(consultarSemNavegador(volume));

@@ -61,4 +61,12 @@ public class Volume {
         return URL;
     }
 
+    @Override
+    public String toString() {
+        return "ID: " + id
+                + "\nTítulo: " + titulo
+                + "\nNúmero: " + numero
+                + "\nURL: " + URL;
+    }
+
 }
