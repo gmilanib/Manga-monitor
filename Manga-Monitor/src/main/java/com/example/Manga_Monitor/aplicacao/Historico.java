@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class Historico {
@@ -43,18 +42,28 @@ public class Historico {
                     tentativaPorVolume.add(tentativa);
                 }
             }
-            tentativaPorVolume.removeIf(tentativa -> tentativa.getValor().compareTo(new BigDecimal("1.00")) < 0);
+            if (tentativaPorVolume.isEmpty()) {
+                System.out.println("Sem preço disponível no histórico: " + volume.getTitulo()
+                        + " — volume " + volume.getNumero());
+                continue;
+            }
 
             TentativaConsulta ultimaTentativa = tentativaPorVolume.getLast();
+            tentativaPorVolume.removeIf(tentativa -> tentativa.getValor().compareTo(new BigDecimal("1.00")) < 0);
+            if (tentativaPorVolume.isEmpty()) {
+                System.out.println("Sem preço disponível no histórico: " + volume.getTitulo()
+                        + " — volume " + volume.getNumero());
+                continue;
+            }
 
             tentativaPorVolume.sort(Comparator.comparing(TentativaConsulta::getValor));
 
             TentativaConsulta tentativaMenorPreco = tentativaPorVolume.getFirst();
 
-            if (Objects.equals(ultimaTentativa.getValor(), tentativaMenorPreco.getValor())) {
+            if (ultimaTentativa.getValor().compareTo(tentativaMenorPreco.getValor()) == 0) {
                 System.out.println(">>> Bom preço para compra <<<");
                 System.out.println(ultimaTentativa.toString());
-                System.out.println(volumes.get(0).getURL());
+                System.out.println(volume.getURL());
                 System.out.println("---------------------");
 
             }else{

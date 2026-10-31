@@ -41,6 +41,29 @@ class IdentificacaoTentativaTest {
     }
 
     @Test
+    void devePersistirIndisponivelQuandoAcordeaoNaoTemPrecoPrincipal() {
+        // Esperado: salvar e reler INDISPONIVEL e zero, sem exigir aviso textual.
+        Volume volume = volumes.saveAndFlush(new Volume("Gachiakuta", 10, "https://loja/10"));
+        Page pagina = mock(Page.class);
+        Locator continuar = mock(Locator.class);
+        Locator acordeao = mock(Locator.class);
+        Locator preco = mock(Locator.class);
+        when(pagina.getByRole(any(), any())).thenReturn(continuar);
+        when(pagina.locator("#buyBoxAccordion")).thenReturn(acordeao);
+        when(acordeao.count()).thenReturn(1);
+        when(pagina.locator("#buyBoxAccordion .a-accordion-active #corePriceDisplay_desktop_feature_div .priceToPay"))
+                .thenReturn(preco);
+        when(preco.count()).thenReturn(0);
+        try (var navegador = mockConstruction(NavegadorPlaywright.class,
+                (mock, context) -> when(mock.getPage()).thenReturn(pagina))) {
+            tentativas.saveAndFlush(new TentativaConsulta(volume));
+        }
+        var relida = tentativas.findAll().getFirst();
+        assertThat(relida.getDisponibilidade()).isEqualTo(Disponibilidade.INDISPONIVEL);
+        assertThat(relida.getValor()).isEqualByComparingTo("0");
+    }
+
+    @Test
     void devePersistirERelerPrecoDaOfertaSelecionadaComCentavos() {
         // Esperado: valor 43.44 tanto no objeto criado quanto no registro relido pelo JPA.
         Volume volume = volumes.saveAndFlush(new Volume("Chainsaw man", 23, "https://loja/23"));

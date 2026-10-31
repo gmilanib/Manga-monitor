@@ -17,7 +17,9 @@ public final class ExtratorPrecoAmazon {
                 ? "#buyBoxAccordion .a-accordion-active " + PRECO
                 : PRECO);
         int quantidade = precos.count();
-        if (quantidade == 0 && !temAcordeao) {
+        // Ofertas alternativas não contam como disponibilidade para o monitor.
+        // A ausência da oferta principal independe dos avisos exibidos pela página.
+        if (quantidade == 0) {
             return null;
         }
         if (quantidade != 1) {

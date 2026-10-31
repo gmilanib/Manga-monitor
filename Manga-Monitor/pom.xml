@@ -30,6 +30,7 @@
 		<java.version>21</java.version>
 		<playwright.version>1.63.0</playwright.version>
 	</properties>
+
 	<dependencies>
 		<!-- Disponível também na aplicação: a consulta usará o navegador. -->
 		<dependency>
@@ -84,6 +85,29 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.53.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+		<!-- Integra o Flyway ao Spring Boot. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-flyway</artifactId>
+		</dependency>
+
+		<!-- Adiciona ao Flyway o suporte ao PostgreSQL. -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+
+		<!-- Permite que a aplicação se conecte ao PostgreSQL via JDBC. -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

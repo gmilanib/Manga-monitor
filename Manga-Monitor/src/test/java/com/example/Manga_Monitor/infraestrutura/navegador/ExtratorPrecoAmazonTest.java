@@ -76,11 +76,10 @@ class ExtratorPrecoAmazonTest {
     }
 
     @Test
-    void deveRejeitarAcordeaoSemBlocoAtivo() {
-        // Esperado: não usar a oferta alternativa quando nenhuma está selecionada.
+    void deveRetornarAusenteQuandoAcordeaoNaoTemBlocoAtivo() {
+        // Esperado: null (INDISPONIVEL no chamador), sem usar a oferta alternativa.
         pagina.setContent("<div id='buyBoxAccordion'>" + preco("48,", "35") + "</div>");
-        assertThatThrownBy(() -> ExtratorPrecoAmazon.extrair(pagina))
-                .isInstanceOf(IllegalStateException.class).hasMessageContaining("encontrados: 0");
+        assertThat(ExtratorPrecoAmazon.extrair(pagina)).isNull();
     }
 
     @Test
@@ -106,6 +105,36 @@ class ExtratorPrecoAmazonTest {
         pagina.setContent(preco("1.23,", "44"));
         assertThatThrownBy(() -> ExtratorPrecoAmazon.extrair(pagina))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("inválidos");
+    }
+
+    @Test
+    void deveRetornarAusenteQuandoSoHaOutrasOpcoesDeCompra() {
+        pagina.setContent("<div id='buyBoxAccordion'><span>A partir de R$ 249,90</span>"
+                + "<a>Ver todas as opções de compra</a></div>");
+        assertThat(ExtratorPrecoAmazon.extrair(pagina)).isNull();
+    }
+
+    @Test
+    void deveRetornarAusenteQuandoTemporariamenteIndisponivel() {
+        pagina.setContent("<div id='buyBoxAccordion'>"
+                + "<span>Temporariamente indisponível.</span></div>");
+        assertThat(ExtratorPrecoAmazon.extrair(pagina)).isNull();
+    }
+
+    @Test
+    void deveRetornarAusenteSemOfertaPrincipalMesmoComAvisoOculto() {
+        // Esperado: null; a ausência da oferta principal não depende do aviso.
+        pagina.setContent("<div id='buyBoxAccordion'>" + preco("48,", "35")
+                + "<span hidden>Temporariamente indisponível.</span></div>");
+        assertThat(ExtratorPrecoAmazon.extrair(pagina)).isNull();
+    }
+
+    @Test
+    void deveRetornarAusenteQuandoBlocoAtivoNaoContemPrecoPrincipal() {
+        // Esperado: null, mesmo havendo preço em outra oferta do acordeão.
+        pagina.setContent("<div id='buyBoxAccordion'><div>" + preco("48,", "35")
+                + "</div><div class='a-accordion-active'>Sem oferta principal</div></div>");
+        assertThat(ExtratorPrecoAmazon.extrair(pagina)).isNull();
     }
 
     @Test
